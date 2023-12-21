@@ -16,11 +16,18 @@
 	</properties>
 	<dependencies>
 
+	
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>5.5.2</version> <!-- 최신 버전으로 업데이트하세요 -->
-		</dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${org.springframework-version}</version> <!-- 실제 버전에 따라 변경해야 합니다. -->
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${org.springframework-version}</version> <!-- 실제 버전에 따라 변경해야 합니다. -->
+    </dependency>
+
 		<!-- mysql 부분 -->
 		<dependency>
 			<groupId>com.mysql</groupId>

@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,32 +36,32 @@ public class LoginController {
    @Autowired
    ProductService  productService;
    
+   @Autowired
+   private PasswordEncoder passwordEncoder; // PasswordEncoder 주입
+   
    @PostMapping("/login")
    public String processLogin(@ModelAttribute LoginDTO loginDTO, @ModelAttribute ChatDTO chatDTO,
          HttpServletRequest request) {
-      if (loginService.checkLogin(loginDTO)) {
- 
-         HttpSession session = request.getSession();
-  
-         // selectAll 메소드 호출하여 유저 정보 가져오기
-         String userId = loginDTO.getUser_id();
-         LoginDTO selectedUser = loginService.getLoginDTO(userId);
-         session.setAttribute("user", selectedUser);
+      // 아이디로 저장된 사용자 정보 가져오기
+      LoginDTO storedUser = loginService.getLoginDTO(loginDTO.getUser_id());
 
-         // 세션에 selectedUser 저장
-         session.setAttribute("selectedUser", selectedUser);
-         String chatlogin = selectedUser.getUser_code();
-        // System.out.println("코드뽑아오기" + chatlogin);
-
-         List<Object> chatList = chatService.selectAllCode(chatlogin);
-        // System.out.println("넘어갈때 리스트@@@@@@" + chatList);
-         session.setAttribute("chatList", chatList);
-
-         return "/homePage/homePage";
-      } else {
-
-         return "redirect:/login?error=loginerror";
+      // 저장된 사용자가 없거나 비밀번호가 일치하지 않으면 로그인 실패
+      if (storedUser == null || !passwordEncoder.matches(loginDTO.getUser_pw(), storedUser.getUser_pw())) {
+         return "/login/login";
       }
+
+      HttpSession session = request.getSession();
+      // 사용자 정보를 세션에 저장
+      session.setAttribute("user", storedUser);
+      session.setAttribute("selectedUser", storedUser);
+
+      // 채팅 관련 정보 설정
+      String chatLogin = storedUser.getUser_code();
+      List<Object> chatList = chatService.selectAllCode(chatLogin);
+      session.setAttribute("chatList", chatList);
+
+      return "/homePage/homePage";
+   
 
    }
 //////관리자 기능 추가////////
