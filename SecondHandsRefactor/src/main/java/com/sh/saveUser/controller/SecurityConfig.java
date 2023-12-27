@@ -58,8 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 // 동시에 하나의 세션만 허용
                 .maximumSessions(1)
-                // 세션이 만료된 경우 "/homePage"로 이동
-                .expiredUrl("/homePage")
+                // 세션이 만료된 경우 "/login"로 이동
+                .expiredUrl("/login")
                 // 세션 관리를 위해 정의한 빈 사용
                 .sessionRegistry(sessionRegistry());
     }
